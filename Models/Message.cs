@@ -15,7 +15,7 @@ namespace Lcs9sem5pr1_DBtest.Models
         public int? FromUserId { get; set; }//Идентификатор отправителя
         public virtual User? ToUser { get; set; }//Навигационное свойство для получателя
         public virtual User? FromUser { get; set; } // Навигационное свойство для отправителя
-        public List<string>? UnreadMessages { get; set; } // Список непрочитанных сообщений
+        //public List<string>? UnreadMessages { get; set; } // Список непрочитанных сообщений
 
 
 

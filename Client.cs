@@ -1,55 +1,67 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Lcs9sem5pr1_DBtest.Abstraction;
+using System;
 using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
-// класс добавлен для демонстрации
-//Урок 5.Базы данных: Entity framework, code first / db first
-// Реализуйте тип сообщений List, при котором клиент будет получать все непрочитанные сообщения с сервера.
+
 namespace Lcs9sem5pr1_DBtest
 {
-    internal class Client
+    public class Client
     {
-        public static async Task SendMsg(string name)
+        private readonly string _name; 
+        private readonly IMessageSource _messageSource;
+        private readonly IPEndPoint _peerEndpoint;
+        public Client()
         {
-            IPEndPoint ep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 5430);
-            UdpClient udpClient = new UdpClient();
+
+        }
+        public Client(IMessageSource messageSource, IPEndPoint peerEndPoint, string name)
+        {
+            _messageSource = messageSource;
+            _peerEndpoint = peerEndPoint;
+            _name = name;
+        }
+        //метод для регистрации клиента
+        private void Regestred()
+        {
+            var messageJson = new MessageUDP()
+            {
+                Command = Command.Register,
+                FromName = _name
+            };
+            _messageSource.SendMessage(messageJson, _peerEndpoint);
+        }
+        public void ClientSendler()
+        {
+            Regestred();
             while (true)
             {
-                Console.WriteLine("Введите имя получателя");
-
-                string toName = Console.ReadLine();
-                if (String.IsNullOrEmpty(toName))
+                Console.WriteLine("Enter message: ");
+                string text = Console.ReadLine();
+                Console.WriteLine("Enter name: ");
+                string name = Console.ReadLine();
+                if (string.IsNullOrEmpty(name))
                 {
-                    Console.WriteLine($"Вы не ввели имя пользователя");
                     continue;
                 }
-                Console.WriteLine("Введите сообщение или <Exit> для выхода из Client.cs (внутри while (true):");
+                var messageJson = new MessageUDP()
+                {
+                    Text = text,
+                    FromName = _name,
+                    ToName = name
+                };
 
-                string text = Console.ReadLine();
-
-                MessageUDP msg4 = new MessageUDP();
-                msg4.ToName = toName;
-                msg4.FromName = name;
-                msg4.Command = Command.Register;
-
-
-                string responseMsgJs = msg4.ToJson(); //было до шаблона Прототип
-                                                     
-                byte[] responseData = Encoding.UTF8.GetBytes(responseMsgJs);
-                await udpClient.SendAsync(responseData, responseData.Length, ep);
-
-                byte[] answerData = udpClient.Receive(ref ep);
-
-                string answerMsgJs = Encoding.UTF8.GetString(answerData);
-                MessageUDP? answerMsg = MessageUDP.FromJson(answerMsgJs);
-                Console.WriteLine(answerMsg.ToString());
+                _messageSource.SendMessage(messageJson, _peerEndpoint);
 
             }
-
-
+        }
+        public void ClientListener()
+        {
+            Regestred();
+            IPEndPoint ep = new IPEndPoint(_peerEndpoint.Address, _peerEndpoint.Port);
+            while (true)
+            {                
+                MessageUDP message = _messageSource.ReceiveMessage(ref ep);
+                Console.WriteLine(message.ToString());
+            }
 
         }
     }

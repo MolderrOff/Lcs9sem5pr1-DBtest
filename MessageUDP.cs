@@ -23,7 +23,11 @@ namespace Lcs9sem5pr1_DBtest
         public string FromName { get; set; } //имя отправителя
         public string ToName { get; set; } // имя получателя
         public string Text { get; set; } // текст сообщени        //Метод для сериализации в JSON
-        public List<string> UnreadMessages { get; set; } //добавлено для ДЗ Реализуйте тип сообщений List
+        public override string ToString()
+        {
+            return $"{DateTime.Now} \n Получено сообщение {Text} \n {FromName}";
+        }
+
         public string ToJson()
         {
             return JsonSerializer.Serialize(this);
