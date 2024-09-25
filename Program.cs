@@ -5,6 +5,11 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Lcs9sem5pr1_DBtest.Abstraction;
+// Домашнее задание
+//Разработка сетевого приложения на C# (семинары)
+//Урок 6. Тестирование приложений: test driven development
+//Продумайте, как можно протестировать код клиента по аналогии с кодом сервера.
+
 //Семинар 5. Сервер, чат. Собираемся добавить поддержку работы с бд в наше приложение чата
 //Code First. В messages Должны храниться сообщения
 //в users список пользователей. Разработать модель т. о. чтобы учесть что в сообщениях
@@ -57,7 +62,7 @@ namespace Lcs9sem5pr1_DBtest
                 
                 var c = new Client();
                 c.ClientListener();
-                c.ClientListener();
+                c.ClientSendler();
                 Console.ReadLine();
             }
             else
